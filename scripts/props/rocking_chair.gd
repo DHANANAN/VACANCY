@@ -21,3 +21,4 @@ func _process(delta: float) -> void:
 func _on_interacted(_player: Node3D) -> void:
 	if GameManager:
 		GameManager.show_subtitle("Grandmother's chair. It smells faintly of lavender and tea, as if she just stood up.", 4.5)
+

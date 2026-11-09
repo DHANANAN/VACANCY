@@ -26,3 +26,4 @@ func _process(delta: float) -> void:
 		omni_light.light_energy = randf_range(0.2, 1.4)
 	elif omni_light:
 		omni_light.light_energy = lerp(omni_light.light_energy, 1.0, delta * 5.0)
+

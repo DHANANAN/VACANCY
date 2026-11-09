@@ -8,7 +8,7 @@ config_version=5
 
 config/name="VACANCY"
 config/description="A first-person psychological horror game about isolation and reaching back."
-run/main_scene="res://scenes/levels/house_full.tscn"
+run/main_scene="res://scenes/levels/pt_corridor.tscn"
 config/features=PackedStringArray("4.3", "4.7", "Forward Plus")
 config/icon="res://icon.svg"
 

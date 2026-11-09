@@ -19,3 +19,4 @@ func _on_interacted(_player: Node3D) -> void:
 		# In Night 2 or later, the portrait warps further
 		if GameManager.current_night >= GameManager.Night.NIGHT_2:
 			inspect_text = "Every photograph holds the same face now... It looks like my own."
+

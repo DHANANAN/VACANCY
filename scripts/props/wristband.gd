@@ -10,3 +10,4 @@ func _ready() -> void:
 func _on_interacted(_player: Node3D) -> void:
 	if GameManager:
 		GameManager.show_subtitle("A white hospital admission band: 'PATIENT: ARIN - ADMIT DATE: --/--/----'", 5.0)
+

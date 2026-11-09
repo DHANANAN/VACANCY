@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dm2k9v1x4m8r7"]
+
+[ext_resource type="Texture2D" uid="uid://bn6v2x8m1k4q5" path="res://assets/textures/ceiling_plaster.jpg" id="1_tex"]
+
+[resource]
+resource_name = "CeilingPlaster"
+albedo_color = Color(0.65, 0.65, 0.65, 1)
+albedo_texture = ExtResource("1_tex")
+roughness = 0.95
+uv1_scale = Vector3(4, 4, 4)
+texture_filter = 5

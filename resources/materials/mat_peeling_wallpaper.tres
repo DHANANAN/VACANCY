@@ -1,7 +1,11 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://be5e7q8m1x9v0"]
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://be5e7q8m1x9v0"]
+
+[ext_resource type="Texture2D" uid="uid://bg4k1m8v2x9q3" path="res://assets/textures/vintage_wallpaper.jpg" id="1_tex"]
 
 [resource]
 resource_name = "VintageWallpaper"
-albedo_color = Color(0.24, 0.22, 0.19, 1)
-roughness = 0.9
-uv1_scale = Vector3(1, 1, 1)
+albedo_color = Color(0.7, 0.65, 0.6, 1)
+albedo_texture = ExtResource("1_tex")
+roughness = 0.85
+uv1_scale = Vector3(4, 3, 4)
+texture_filter = 5

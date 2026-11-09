@@ -27,3 +27,4 @@ func _on_interacted(_player: Node3D) -> void:
 			GameManager.show_subtitle("The static hums... faint muffled murmurs underneath, like people talking in another room.", 4.0)
 		else:
 			GameManager.show_subtitle("Click. Silence returns to the living room.", 2.5)
+

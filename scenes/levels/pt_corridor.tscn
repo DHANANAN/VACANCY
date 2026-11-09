@@ -1,0 +1,306 @@
+[gd_scene load_steps=22 format=3 uid="uid://c8m4q7w1x9v2k"]
+
+[ext_resource type="PackedScene" uid="uid://b1m623637yq8y" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="Environment" uid="uid://c6l2x1x5h1k90" path="res://default_env.tres" id="2_env"]
+[ext_resource type="Material" uid="uid://df7w8y1x5r3q2" path="res://resources/materials/mat_wood_floor.tres" id="3_wood_floor"]
+[ext_resource type="Material" uid="uid://be5e7q8m1x9v0" path="res://resources/materials/mat_peeling_wallpaper.tres" id="4_wallpaper"]
+[ext_resource type="Material" uid="uid://dm2k9v1x4m8r7" path="res://resources/materials/mat_plaster_ceiling.tres" id="5_plaster"]
+[ext_resource type="Material" uid="uid://d1g5m8r2x4y9p" path="res://resources/materials/mat_door_wood.tres" id="6_door_mat"]
+[ext_resource type="AudioStream" uid="uid://dw3v8x1m4k7q2" path="res://assets/audio/ambient_drone.wav" id="7_drone_audio"]
+[ext_resource type="AudioStream" uid="uid://b6k1m9v2x4r7p" path="res://assets/audio/floor_creak.wav" id="8_creak_audio"]
+[ext_resource type="AudioStream" uid="uid://c7m2v9x1k4r8p" path="res://assets/audio/tap_drip.wav" id="9_drip_audio"]
+[ext_resource type="Script" path="res://scripts/props/interactive_door.gd" id="10_door_script"]
+[ext_resource type="Script" path="res://scripts/props/swinging_lamp.gd" id="11_lamp_script"]
+[ext_resource type="Script" path="res://scripts/props/shifting_picture_frame.gd" id="12_portrait_script"]
+[ext_resource type="Script" path="res://scripts/props/inspectable_object.gd" id="13_kettle_script"]
+[ext_resource type="Script" path="res://scripts/props/telephone.gd" id="14_phone_script"]
+[ext_resource type="Script" path="res://scripts/props/hallway_clock.gd" id="15_clock_script"]
+[ext_resource type="Script" path="res://scripts/props/creaking_floor.gd" id="16_creak_script"]
+[ext_resource type="Script" path="res://scripts/props/dripping_tap.gd" id="17_tap_script"]
+
+[sub_resource type="BoxShape3D" id="BoxShape_Door"]
+size = Vector3(0.1, 2.2, 1.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape_Generic"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape_CreakTrigger"]
+size = Vector3(2.0, 0.5, 1.5)
+
+[node name="PT_Corridor" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_env")
+
+[node name="AmbientDrone" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_drone_audio")
+volume_db = -8.0
+autoplay = true
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 4.5)
+
+; ====================================================================
+; P.T. L-SHAPED CORRIDOR ARCHITECTURE
+; ====================================================================
+[node name="Architecture" type="Node3D" parent="."]
+
+; Section 1: Main hallway floor (Z from +5 to -5)
+[node name="Floor_Main" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+use_collision = true
+size = Vector3(2.4, 0.2, 11)
+material = ExtResource("3_wood_floor")
+
+; Section 2: Corner turn floor (X from 0 to 5, at Z = -4.5)
+[node name="Floor_Corner" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, -0.1, -4.5)
+use_collision = true
+size = Vector3(5.0, 0.2, 2.4)
+material = ExtResource("3_wood_floor")
+
+; Ceilings
+[node name="Ceiling_Main" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9, 0)
+use_collision = true
+size = Vector3(2.4, 0.2, 11)
+material = ExtResource("5_plaster")
+
+[node name="Ceiling_Corner" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 2.9, -4.5)
+use_collision = true
+size = Vector3(5.0, 0.2, 2.4)
+material = ExtResource("5_plaster")
+
+; Walls: Left Wall of Main Hallway
+[node name="Wall_Left" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 1.4, 0)
+use_collision = true
+size = Vector3(0.2, 2.8, 11)
+material = ExtResource("4_wallpaper")
+
+; Walls: Right Wall of Main Hallway (stops before corner turn)
+[node name="Wall_Right" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 1.4, 1.0)
+use_collision = true
+size = Vector3(0.2, 2.8, 9)
+material = ExtResource("4_wallpaper")
+
+; Walls: Entrance Back Wall
+[node name="Wall_Back" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 5.6)
+use_collision = true
+size = Vector3(2.8, 2.8, 0.2)
+material = ExtResource("4_wallpaper")
+
+; Walls: End of Main Corridor Wall (facing player as they walk forward)
+[node name="Wall_Front" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 1.4, -5.6)
+use_collision = true
+size = Vector3(1.6, 2.8, 0.2)
+material = ExtResource("4_wallpaper")
+
+; Corner corridor side walls
+[node name="Wall_Corner_South" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, 1.4, -3.2)
+use_collision = true
+size = Vector3(3.6, 2.8, 0.2)
+material = ExtResource("4_wallpaper")
+
+[node name="Wall_Corner_North" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, 1.4, -5.8)
+use_collision = true
+size = Vector3(5.6, 2.8, 0.2)
+material = ExtResource("4_wallpaper")
+
+; Loop Door Wall at the end of corner
+[node name="Wall_Loop_End" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0, 1.4, -4.5)
+use_collision = true
+size = Vector3(0.2, 2.8, 2.4)
+material = ExtResource("4_wallpaper")
+
+; ====================================================================
+; LIGHTING (P.T. MOODY TUNGSTEN & CHOPPY SHADOWS)
+; ====================================================================
+[node name="Lighting" type="Node3D" parent="."]
+
+; 1. Swinging Hallway Pendulum Lamp
+[node name="SwingingLamp" type="Node3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0.5)
+script = ExtResource("11_lamp_script")
+swing_speed = 1.3
+swing_angle = 14.0
+
+[node name="Hinge" type="Node3D" parent="Lighting/SwingingLamp"]
+
+[node name="CordMesh" type="CSGCylinder3D" parent="Lighting/SwingingLamp/Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+radius = 0.012
+height = 0.8
+
+[node name="LightBulb" type="CSGSphere3D" parent="Lighting/SwingingLamp/Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.85, 0)
+radius = 0.07
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Lighting/SwingingLamp/Hinge/LightBulb"]
+light_color = Color(0.98, 0.8, 0.55, 1)
+light_energy = 1.6
+omni_range = 7.5
+omni_attenuation = 1.4
+shadow_enabled = true
+
+; 2. Dim corner light illuminating the clock
+[node name="CornerLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.2, -4.5)
+light_color = Color(0.85, 0.75, 0.65, 1)
+light_energy = 0.6
+omni_range = 4.0
+shadow_enabled = true
+
+; ====================================================================
+; PROPS & STORY BEATS
+; ====================================================================
+[node name="Props" type="Node3D" parent="."]
+
+; 1. Front door behind player
+[node name="FrontDoorHinge" type="Node3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 5.4)
+
+[node name="InteractiveDoor" type="StaticBody3D" parent="Props/FrontDoorHinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.1, 0)
+script = ExtResource("10_door_script")
+door_hinge_path = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/FrontDoorHinge/InteractiveDoor"]
+shape = SubResource("BoxShape_Door")
+
+[node name="DoorMesh" type="CSGBox3D" parent="Props/FrontDoorHinge/InteractiveDoor"]
+size = Vector3(0.08, 2.2, 1.0)
+material = ExtResource("6_door_mat")
+
+; 2. Creaking floorboard trigger at Z = 2.0
+[node name="CreakTrigger" type="Area3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 2.0)
+script = ExtResource("16_creak_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/CreakTrigger"]
+shape = SubResource("BoxShape_CreakTrigger")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Props/CreakTrigger"]
+stream = ExtResource("8_creak_audio")
+volume_db = -4.0
+
+; 3. Hallway Table (Right wall, right in the player's restricted turn view)
+[node name="HallwayTable" type="CSGBox3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0.45, 0.2)
+use_collision = true
+size = Vector3(0.6, 0.9, 1.4)
+material = ExtResource("6_door_mat")
+
+; 4. Warm Kettle on Table
+[node name="WarmKettle" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.05, 0.5)
+script = ExtResource("13_kettle_script")
+narration_text = "Dust on the furniture... but the kettle is still warm."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/WarmKettle"]
+shape = SubResource("BoxShape_Generic")
+
+[node name="Mesh" type="CSGCylinder3D" parent="Props/WarmKettle"]
+radius = 0.16
+height = 0.3
+
+; 5. Telephone on Table (Dev calling)
+[node name="Telephone" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0.98, -0.2)
+script = ExtResource("14_phone_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/Telephone"]
+shape = SubResource("BoxShape_Generic")
+
+[node name="PhoneMesh" type="CSGBox3D" parent="Props/Telephone"]
+size = Vector3(0.18, 0.08, 0.22)
+
+; 6. Shifting Family Portraits along Right Wall
+[node name="Portrait_1" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.18, 1.6, 2.5)
+script = ExtResource("12_portrait_script")
+inspect_text = "A black-and-white family portrait. The grandfather stands proud, but the boy's face is blurred beyond recognition."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/Portrait_1"]
+shape = SubResource("BoxShape_Generic")
+
+[node name="FrameMesh" type="CSGBox3D" parent="Props/Portrait_1"]
+size = Vector3(0.06, 0.9, 0.7)
+material = ExtResource("6_door_mat")
+
+[node name="Portrait_2" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.18, 1.6, -2.0)
+script = ExtResource("12_portrait_script")
+inspect_text = "Another photo from years later. Slowly, the faces in every frame are starting to resemble the same person."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/Portrait_2"]
+shape = SubResource("BoxShape_Generic")
+
+[node name="FrameMesh" type="CSGBox3D" parent="Props/Portrait_2"]
+size = Vector3(0.06, 0.8, 0.6)
+material = ExtResource("6_door_mat")
+
+; 7. Clock stuck at 3:07 on the corner table
+[node name="CornerTable" type="CSGBox3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.45, -5.4)
+use_collision = true
+size = Vector3(0.8, 0.9, 0.6)
+material = ExtResource("6_door_mat")
+
+[node name="Clock" type="StaticBody3D" parent="Props/CornerTable"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+script = ExtResource("15_clock_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/CornerTable/Clock"]
+shape = SubResource("BoxShape_Generic")
+
+[node name="ClockMesh" type="CSGBox3D" parent="Props/CornerTable/Clock"]
+size = Vector3(0.3, 0.35, 0.15)
+
+; 8. Bathroom Door (cracked open with sound of dripping tap)
+[node name="BathroomDoorHinge" type="Node3D" parent="Props"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1.5, 0, -3.3)
+
+[node name="BathroomDoor" type="StaticBody3D" parent="Props/BathroomDoorHinge"]
+transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, 0.5, 1.1, 0)
+script = ExtResource("10_door_script")
+door_hinge_path = NodePath("..")
+open_angle = 25.0
+is_open = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/BathroomDoorHinge/BathroomDoor"]
+shape = SubResource("BoxShape_Door")
+
+[node name="DoorMesh" type="CSGBox3D" parent="Props/BathroomDoorHinge/BathroomDoor"]
+size = Vector3(0.08, 2.2, 1.0)
+material = ExtResource("6_door_mat")
+
+[node name="BathroomAudio" type="AudioStreamPlayer3D" parent="Props/BathroomDoorHinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.0, 1.0)
+stream = ExtResource("9_drip_audio")
+unit_size = 3.0
+max_distance = 8.0
+script = ExtResource("17_tap_script")
+
+; 9. Loop Door at the End of Corridor
+[node name="LoopDoorHinge" type="Node3D" parent="Props"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.8, 0, -4.5)
+
+[node name="LoopDoor" type="StaticBody3D" parent="Props/LoopDoorHinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.1, 0)
+script = ExtResource("10_door_script")
+door_hinge_path = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/LoopDoorHinge/LoopDoor"]
+shape = SubResource("BoxShape_Door")
+
+[node name="DoorMesh" type="CSGBox3D" parent="Props/LoopDoorHinge/LoopDoor"]
+size = Vector3(0.08, 2.2, 1.0)
+material = ExtResource("6_door_mat")

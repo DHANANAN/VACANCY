@@ -24,3 +24,4 @@ func _on_interacted(_player: Node3D) -> void:
 			GameManager.take_pill()
 	else:
 		prompt_message = "Open Medicine Cabinet"
+

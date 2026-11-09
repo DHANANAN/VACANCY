@@ -420,3 +420,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 [node name="HeadMesh" type="CSGSphere3D" parent="ShadowFigure/HeadPivot"]
 radius = 0.2
 material = ExtResource("4_wallpaper")
+
