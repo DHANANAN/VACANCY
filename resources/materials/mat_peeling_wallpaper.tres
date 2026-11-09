@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://be5e7q8m1x9v0"]
+
+[resource]
+resource_name = "VintageWallpaper"
+albedo_color = Color(0.24, 0.22, 0.19, 1)
+roughness = 0.9
+uv1_scale = Vector3(1, 1, 1)

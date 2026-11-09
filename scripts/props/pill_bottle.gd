@@ -12,3 +12,4 @@ func _ready() -> void:
 func _on_interacted(_player: Node3D) -> void:
 	if GameManager:
 		GameManager.take_pill()
+

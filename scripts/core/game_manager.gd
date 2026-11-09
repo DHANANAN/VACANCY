@@ -70,3 +70,4 @@ func trigger_phone_ring() -> void:
 
 func stop_phone_ring() -> void:
 	phone_ringing_stopped.emit()
+

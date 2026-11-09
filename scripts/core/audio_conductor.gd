@@ -28,3 +28,4 @@ func _on_heart_rate_changed(new_bpm: float) -> void:
 
 func _on_drip_timeout() -> void:
 	beat_triggered.emit()
+

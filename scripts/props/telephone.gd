@@ -27,3 +27,4 @@ func _on_interacted(_player: Node3D) -> void:
 	else:
 		if GameManager:
 			GameManager.show_subtitle("Battery: 4%. 18 missed calls from Dev.", 3.5)
+

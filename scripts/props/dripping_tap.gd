@@ -21,3 +21,4 @@ func _on_beat() -> void:
 	if audio_player and audio_player.stream:
 		audio_player.pitch_scale = randf_range(0.96, 1.04)
 		audio_player.play()
+

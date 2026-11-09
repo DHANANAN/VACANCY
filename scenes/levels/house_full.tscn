@@ -1,0 +1,422 @@
+[gd_scene load_steps=24 format=3 uid="uid://b6q4e8w1r5y2k"]
+
+[ext_resource type="PackedScene" uid="uid://b1m623637yq8y" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="Environment" uid="uid://c6l2x1x5h1k90" path="res://default_env.tres" id="2_env"]
+[ext_resource type="Material" uid="uid://df7w8y1x5r3q2" path="res://resources/materials/mat_wood_floor.tres" id="3_wood_floor"]
+[ext_resource type="Material" uid="uid://be5e7q8m1x9v0" path="res://resources/materials/mat_peeling_wallpaper.tres" id="4_wallpaper"]
+[ext_resource type="Material" uid="uid://cb4k9v2x1m8r5" path="res://resources/materials/mat_basement_concrete.tres" id="5_concrete"]
+[ext_resource type="Material" uid="uid://d1g5m8r2x4y9p" path="res://resources/materials/mat_door_wood.tres" id="6_door_mat"]
+[ext_resource type="Script" path="res://scripts/props/interactive_door.gd" id="7_door_script"]
+[ext_resource type="Script" path="res://scripts/props/swinging_lamp.gd" id="8_lamp_script"]
+[ext_resource type="Script" path="res://scripts/props/shifting_picture_frame.gd" id="9_portrait_script"]
+[ext_resource type="Script" path="res://scripts/props/rocking_chair.gd" id="10_chair_script"]
+[ext_resource type="Script" path="res://scripts/props/crt_tv.gd" id="11_tv_script"]
+[ext_resource type="Shader" path="res://shaders/crt_static.gdshader" id="12_tv_shader"]
+[ext_resource type="Script" path="res://scripts/props/dripping_tap.gd" id="13_tap_script"]
+[ext_resource type="Script" path="res://scripts/props/inspectable_object.gd" id="14_inspect_script"]
+[ext_resource type="Script" path="res://scripts/props/medicine_cabinet.gd" id="15_cabinet_script"]
+[ext_resource type="Script" path="res://scripts/props/telephone.gd" id="16_phone_script"]
+[ext_resource type="Script" path="res://scripts/props/wristband.gd" id="17_wristband_script"]
+[ext_resource type="Script" path="res://scripts/props/shadow_figure.gd" id="18_figure_script"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_TV"]
+render_priority = 0
+shader = ExtResource("12_tv_shader")
+shader_parameter/screen_glow = Color(0.65, 0.78, 0.95, 1)
+shader_parameter/static_intensity = 0.85
+shader_parameter/scanline_count = 100.0
+shader_parameter/flicker_speed = 20.0
+
+[sub_resource type="BoxShape3D" id="BoxShape_Door"]
+size = Vector3(0.1, 2.2, 1.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape_Generic"]
+size = Vector3(0.8, 0.8, 0.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape_Item"]
+size = Vector3(0.4, 0.4, 0.4)
+
+[node name="HouseFull" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_env")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 5)
+
+; ====================================================================
+; GROUND FLOOR ARCHITECTURE (Y = 0)
+; ====================================================================
+[node name="GroundFloor" type="Node3D" parent="."]
+
+[node name="HallwayFloor" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+use_collision = true
+size = Vector3(3.2, 0.2, 16)
+material = ExtResource("3_wood_floor")
+
+[node name="HallwayCeiling" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
+use_collision = true
+size = Vector3(3.2, 0.2, 16)
+material = ExtResource("4_wallpaper")
+
+[node name="WallLeft_Hallway" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 1.5, 2.5)
+use_collision = true
+size = Vector3(0.2, 3, 11)
+material = ExtResource("4_wallpaper")
+
+[node name="WallRight_Hallway" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 1.5, 2.5)
+use_collision = true
+size = Vector3(0.2, 3, 11)
+material = ExtResource("4_wallpaper")
+
+[node name="EntranceBackWall" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 8.1)
+use_collision = true
+size = Vector3(3.6, 3, 0.2)
+material = ExtResource("4_wallpaper")
+
+; Living Room (Left wing)
+[node name="LivingRoomFloor" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, -0.1, -4.5)
+use_collision = true
+size = Vector3(7.2, 0.2, 7)
+material = ExtResource("3_wood_floor")
+
+[node name="LivingRoomCeiling" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 3.1, -4.5)
+use_collision = true
+size = Vector3(7.2, 0.2, 7)
+material = ExtResource("4_wallpaper")
+
+[node name="LivingRoomOuterWall_Left" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.5, -4.5)
+use_collision = true
+size = Vector3(0.2, 3, 7.2)
+material = ExtResource("4_wallpaper")
+
+[node name="LivingRoomBackWall" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 1.5, -8.1)
+use_collision = true
+size = Vector3(7.4, 3, 0.2)
+material = ExtResource("4_wallpaper")
+
+; Kitchen & Bathroom (Right wing)
+[node name="KitchenFloor" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, -0.1, -4.5)
+use_collision = true
+size = Vector3(7.2, 0.2, 7)
+material = ExtResource("3_wood_floor")
+
+[node name="KitchenCeiling" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 3.1, -4.5)
+use_collision = true
+size = Vector3(7.2, 0.2, 7)
+material = ExtResource("4_wallpaper")
+
+[node name="KitchenOuterWall_Right" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9, 1.5, -4.5)
+use_collision = true
+size = Vector3(0.2, 3, 7.2)
+material = ExtResource("4_wallpaper")
+
+[node name="KitchenBackWall" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 1.5, -8.1)
+use_collision = true
+size = Vector3(7.4, 3, 0.2)
+material = ExtResource("4_wallpaper")
+
+; ====================================================================
+; STAIRS: TO SECOND FLOOR & BASEMENT
+; ====================================================================
+[node name="StairsTo2ndFloor" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 0.866025, -0.5, 0, 0.5, 0.866025, 0, 1.5, -6.5)
+use_collision = true
+size = Vector3(2.2, 0.3, 4.5)
+material = ExtResource("3_wood_floor")
+
+[node name="StairsToBasement" type="CSGBox3D" parent="GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, -2.6, -1.5, 0.5)
+use_collision = true
+size = Vector3(1.6, 0.3, 4.5)
+material = ExtResource("5_concrete")
+
+; ====================================================================
+; SECOND FLOOR (Y = +3.5)
+; ====================================================================
+[node name="SecondFloor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+
+[node name="UpperLandingFloor" type="CSGBox3D" parent="SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -4.5)
+use_collision = true
+size = Vector3(8.0, 0.2, 8.0)
+material = ExtResource("3_wood_floor")
+
+[node name="UpperCeiling" type="CSGBox3D" parent="SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, -4.5)
+use_collision = true
+size = Vector3(8.0, 0.2, 8.0)
+material = ExtResource("4_wallpaper")
+
+[node name="BedroomOuterWall" type="CSGBox3D" parent="SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.5, -4.5)
+use_collision = true
+size = Vector3(0.2, 3, 8.2)
+material = ExtResource("4_wallpaper")
+
+[node name="UpperBackWall" type="CSGBox3D" parent="SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8.6)
+use_collision = true
+size = Vector3(8.4, 3, 0.2)
+material = ExtResource("4_wallpaper")
+
+; Boarded window in Bedroom
+[node name="BoardedWindow" type="CSGBox3D" parent="SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 1.6, -5.5)
+size = Vector3(0.3, 1.4, 1.8)
+material = ExtResource("6_door_mat")
+
+; ====================================================================
+; BASEMENT (Y = -3.5)
+; ====================================================================
+[node name="Basement" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.2, 0)
+
+[node name="CellarFloor" type="CSGBox3D" parent="Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, -0.1, 0)
+use_collision = true
+size = Vector3(8.0, 0.2, 8.0)
+material = ExtResource("5_concrete")
+
+[node name="CellarCeiling" type="CSGBox3D" parent="Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, 3.1, 0)
+use_collision = true
+size = Vector3(8.0, 0.2, 8.0)
+material = ExtResource("5_concrete")
+
+[node name="CellarWall_Left" type="CSGBox3D" parent="Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 1.5, 0)
+use_collision = true
+size = Vector3(0.2, 3, 8.2)
+material = ExtResource("5_concrete")
+
+[node name="CellarWall_Front" type="CSGBox3D" parent="Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, 1.5, -4.1)
+use_collision = true
+size = Vector3(8.2, 3, 0.2)
+material = ExtResource("5_concrete")
+
+; ====================================================================
+; PROPS & INTERACTIVE HORROR STORY ELEMENTS
+; ====================================================================
+[node name="Props" type="Node3D" parent="."]
+
+; 1. Front door that won't stay shut
+[node name="FrontDoorHinge" type="Node3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0, 7.9)
+
+[node name="FrontDoor" type="StaticBody3D" parent="Props/FrontDoorHinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.1, 0)
+script = ExtResource("7_door_script")
+door_hinge_path = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/FrontDoorHinge/FrontDoor"]
+shape = SubResource("BoxShape_Door")
+
+[node name="Mesh" type="CSGBox3D" parent="Props/FrontDoorHinge/FrontDoor"]
+size = Vector3(0.08, 2.2, 1.0)
+material = ExtResource("6_door_mat")
+
+; 2. Swinging hallway lamp (P.T. pendulum light)
+[node name="HallwaySwingingLamp" type="Node3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 2.0)
+script = ExtResource("8_lamp_script")
+
+[node name="Hinge" type="Node3D" parent="Props/HallwaySwingingLamp"]
+
+[node name="CordMesh" type="CSGCylinder3D" parent="Props/HallwaySwingingLamp/Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+radius = 0.015
+height = 1.0
+
+[node name="LightBulb" type="CSGSphere3D" parent="Props/HallwaySwingingLamp/Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, 0)
+radius = 0.08
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Props/HallwaySwingingLamp/Hinge/LightBulb"]
+light_color = Color(0.96, 0.82, 0.58, 1)
+light_energy = 1.4
+omni_range = 8.0
+shadow_enabled = true
+
+; 3. Shifting portrait gallery along the hallway wall
+[node name="HallwayPortrait_1" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.58, 1.6, 4.0)
+script = ExtResource("9_portrait_script")
+portrait_mesh_path = NodePath("FrameMesh/Canvas")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/HallwayPortrait_1"]
+shape = SubResource("BoxShape_Item")
+
+[node name="FrameMesh" type="CSGBox3D" parent="Props/HallwayPortrait_1"]
+size = Vector3(0.06, 0.9, 0.7)
+material = ExtResource("6_door_mat")
+
+[node name="Canvas" type="CSGBox3D" parent="Props/HallwayPortrait_1/FrameMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.02, 0, 0)
+size = Vector3(0.04, 0.8, 0.6)
+
+; 4. Living room: Grandmother's rocking chair
+[node name="GrandmotherChair" type="StaticBody3D" parent="Props"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -6.5, 0, -4.5)
+script = ExtResource("10_chair_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/GrandmotherChair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape_Generic")
+
+[node name="SeatPivot" type="Node3D" parent="Props/GrandmotherChair"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+
+[node name="SeatMesh" type="CSGBox3D" parent="Props/GrandmotherChair/SeatPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+size = Vector3(0.7, 0.1, 0.7)
+material = ExtResource("6_door_mat")
+
+[node name="BackMesh" type="CSGBox3D" parent="Props/GrandmotherChair/SeatPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, -0.3)
+size = Vector3(0.7, 0.7, 0.1)
+material = ExtResource("6_door_mat")
+
+; 5. Living room: CRT TV with analog static
+[node name="LivingRoomTV" type="StaticBody3D" parent="Props"]
+transform = Transform3D(0.965926, 0, -0.258819, 0, 1, 0, 0.258819, 0, 0.965926, -3.2, 0.7, -7.2)
+script = ExtResource("11_tv_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/LivingRoomTV"]
+shape = SubResource("BoxShape_Generic")
+
+[node name="BodyMesh" type="CSGBox3D" parent="Props/LivingRoomTV"]
+size = Vector3(0.9, 0.7, 0.6)
+material = ExtResource("4_wallpaper")
+
+[node name="ScreenMesh" type="CSGBox3D" parent="Props/LivingRoomTV"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.31)
+size = Vector3(0.7, 0.5, 0.04)
+material = SubResource("ShaderMaterial_TV")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Props/LivingRoomTV"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.8)
+light_color = Color(0.65, 0.75, 0.95, 1)
+light_energy = 0.9
+omni_range = 3.5
+
+; 6. Kitchen: Sink with dripping tap (heartbeat synchronized)
+[node name="KitchenSink" type="Node3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.9, -7.5)
+script = ExtResource("13_tap_script")
+
+[node name="CounterMesh" type="CSGBox3D" parent="Props/KitchenSink"]
+use_collision = true
+size = Vector3(2.4, 0.9, 0.9)
+material = ExtResource("3_wood_floor")
+
+[node name="TapMesh" type="CSGCylinder3D" parent="Props/KitchenSink"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+radius = 0.03
+height = 0.3
+
+; 7. Kitchen: Table with warm kettle
+[node name="WarmKettle" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0, 1.1, -4.0)
+script = ExtResource("14_inspect_script")
+narration_text = "Dust on the furniture... but the kettle is still warm."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/WarmKettle"]
+shape = SubResource("BoxShape_Item")
+
+[node name="Mesh" type="CSGCylinder3D" parent="Props/WarmKettle"]
+radius = 0.18
+height = 0.35
+
+; 8. Bathroom / Hallway: Medicine cabinet (Relief tablets)
+[node name="MedicineCabinet" type="StaticBody3D" parent="Props"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1.58, 1.6, 0.0)
+script = ExtResource("15_cabinet_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/MedicineCabinet"]
+shape = SubResource("BoxShape_Generic")
+
+[node name="CaseMesh" type="CSGBox3D" parent="Props/MedicineCabinet"]
+size = Vector3(0.6, 0.8, 0.25)
+material = ExtResource("4_wallpaper")
+
+[node name="DoorPivot" type="Node3D" parent="Props/MedicineCabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0, 0.13)
+
+[node name="MirrorDoor" type="CSGBox3D" parent="Props/MedicineCabinet/DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0, 0)
+size = Vector3(0.6, 0.8, 0.04)
+material = ExtResource("6_door_mat")
+
+; 9. Study: Telephone on desk (Dev calling)
+[node name="TelephoneDesk" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0.9, -1.8)
+script = ExtResource("16_phone_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/TelephoneDesk"]
+shape = SubResource("BoxShape_Item")
+
+[node name="DeskMesh" type="CSGBox3D" parent="Props/TelephoneDesk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+use_collision = true
+size = Vector3(0.8, 0.8, 1.2)
+material = ExtResource("3_wood_floor")
+
+[node name="PhoneMesh" type="CSGBox3D" parent="Props/TelephoneDesk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+size = Vector3(0.12, 0.06, 0.2)
+
+; 10. Basement: Hospital wristband in crack of light
+[node name="HospitalWristband" type="StaticBody3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0, -3.1, 0)
+script = ExtResource("17_wristband_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Props/HospitalWristband"]
+shape = SubResource("BoxShape_Item")
+
+[node name="BandMesh" type="CSGBox3D" parent="Props/HospitalWristband"]
+size = Vector3(0.25, 0.02, 0.06)
+
+[node name="BasementLight" type="OmniLight3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, -1.0, 0)
+light_color = Color(0.7, 0.75, 0.8, 1)
+light_energy = 0.5
+omni_range = 5.0
+shadow_enabled = true
+
+; 11. The Figure (Future Arin standing on 2nd floor landing, head tilted)
+[node name="ShadowFigure" type="CharacterBody3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 1.8, 3.2, -5.5)
+script = ExtResource("18_figure_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ShadowFigure"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("BoxShape_Generic")
+
+[node name="BodyMesh" type="CSGCylinder3D" parent="ShadowFigure"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+radius = 0.25
+height = 1.7
+material = ExtResource("4_wallpaper")
+
+[node name="HeadPivot" type="Node3D" parent="ShadowFigure"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+
+[node name="HeadMesh" type="CSGSphere3D" parent="ShadowFigure/HeadPivot"]
+radius = 0.2
+material = ExtResource("4_wallpaper")

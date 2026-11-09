@@ -22,3 +22,4 @@ func _physics_process(_delta: float) -> void:
 		var look_pos = player_target.global_position
 		look_pos.y = global_position.y
 		look_at(look_pos, Vector3.UP)
+

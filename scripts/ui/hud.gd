@@ -33,3 +33,4 @@ func _on_episode_subsided() -> void:
 	if vignette:
 		var tw = create_tween()
 		tw.tween_property(vignette, "modulate:a", 0.0, 1.2)
+
